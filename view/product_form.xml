@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="/form/field[@name='active']" position="after">
+        <group id="raw_products" colspan="6" col="6">
+            <label name="is_raw_product"/>
+            <field name="is_raw_product"/>
+            <label name="raw_product"/>
+            <field name="raw_product"/>
+            <label name="main_product"/>
+            <field name="main_product"/>
+        </group>
+    </xpath>
+</data>

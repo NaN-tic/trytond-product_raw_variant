@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <record model="ir.ui.view" id="template_view_form">
+            <field name="model">product.template</field>
+            <field name="inherit" ref="product.template_view_form"/>
+            <field name="type">form</field>
+            <field name="name">template_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="product_view_form">
+            <field name="model">product.product</field>
+            <field name="inherit" ref="product.product_view_form"/>
+            <field name="type">form</field>
+            <field name="name">product_form</field>
+        </record>
+
+        <record model="ir.action.act_window.domain"
+                id="act_product_form_domain_not_raw">
+            <field name="name">Products</field>
+            <field name="act_window" ref="product.act_product_form"/>
+            <field name="sequence" eval="10"/>
+            <field name="domain">['OR', [('has_raw_products', '=', False)], [('is_raw_product', '=', False)]]</field>
+        </record>
+        <record model="ir.action.act_window.domain"
+                id="act_product_form_domain_raw">
+            <field name="name">Raw Products</field>
+            <field name="act_window" ref="product.act_product_form"/>
+            <field name="sequence" eval="20"/>
+            <field name="domain">[('has_raw_products', '=', True), ('is_raw_product', '=', True)]</field>
+        </record>
+        <record model="ir.action.act_window.domain"
+                id="act_product_form_domain_all">
+            <field name="act_window" ref="product.act_product_form"/>
+            <field name="sequence" eval="9999"/>
+            <field name="name">All</field>
+            <field name="domain"></field>
+        </record>
+    </data>
+</tryton>

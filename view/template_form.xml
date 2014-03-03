@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="/form/notebook/page/field[@name='products']" position="before">
+        <label name="has_raw_products"/>
+        <field name="has_raw_products"/>
+        <newline/>
+        <field name="main_products" mode="tree,form" colspan="2"/>
+        <field name="raw_products" mode="tree,form" colspan="2"/>
+    </xpath>
+</data>

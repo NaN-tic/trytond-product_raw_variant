@@ -92,8 +92,6 @@ class Template:
             for template in templates:
                 products_to_create_main_variant = (
                     template.prepare_raw_products_vals())
-        import sys
-        print >> sys.stderr, "vals: ", vals
         super(Template, cls).write(templates, vals)
         if products_to_create_main_variant:
             for product in products_to_create_main_variant:

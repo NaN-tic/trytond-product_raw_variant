@@ -40,9 +40,6 @@ Create product::
     >>> template.list_price = Decimal('10')
     >>> template.cost_price = Decimal('5')
     >>> template.cost_price_method = 'fixed'
-    >>> import sys
-    >>> print >> sys.stderr, "t.list_price:", template.list_price
-    >>> print >> sys.stderr, "t.cost_price:", template.cost_price
     >>> template.save()
 
 Create variant without Raw Product::

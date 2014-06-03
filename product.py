@@ -138,8 +138,7 @@ class Template:
 class Product:
     __name__ = 'product.product'
 
-    has_raw_products = fields.Function(fields.Boolean('Has Raw Variants',
-            on_change_with=['template']),
+    has_raw_products = fields.Function(fields.Boolean('Has Raw Variants'),
         'on_change_with_has_raw_products', searcher='search_has_raw_products')
     is_raw_product = fields.Boolean('Is Raw Variant', states={
             'invisible': And(~Eval('_parent_template',
@@ -195,6 +194,7 @@ class Product:
                     'it is defined as Raw Variant for product "%(product)s".',
                 })
 
+    @fields.depends('template')
     def on_change_with_has_raw_products(self, name=None):
         return self.template and self.template.has_raw_products or False
 

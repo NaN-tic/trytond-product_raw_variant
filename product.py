@@ -159,10 +159,6 @@ class Product:
                         False),
                     ~Eval('has_raw_products', False)),
                 Eval('is_raw_product', False)),
-            'required': And(
-                Or(Eval('_parent_template', {}).get('has_raw_products', False),
-                    Eval('has_raw_products', False)),
-                ~Eval('is_raw_product', False)),
             },
         depends=['template', 'id', 'has_raw_products', 'is_raw_product'])
     main_product = fields.One2One('product.product-product.raw_product',

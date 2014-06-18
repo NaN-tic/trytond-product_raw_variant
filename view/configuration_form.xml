@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="/form" position="inside">
+        <group id="product_raw_variant" colspan="4">
+            <separator id="raw_product_separator"
+                string="Raw products configuration" colspan="4"/>
+            <label name="raw_product_prefix"/>
+            <field name="raw_product_prefix"/>
+        </group>
+    </xpath>
+</data>

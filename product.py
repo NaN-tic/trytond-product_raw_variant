@@ -1,13 +1,14 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 import logging
+from itertools import izip
 
 from trytond.model import ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import And, Bool, Eval, Or
 from trytond.transaction import Transaction
 
-__all__ = ['Template', 'Product', 'ProductRawProduct']
+__all__ = ['Configuration', 'Template', 'Product', 'ProductRawProduct']
 __metaclass__ = PoolMeta
 
 STATES = {
@@ -15,6 +16,12 @@ STATES = {
     'invisible': ~Eval('has_raw_products', False),
     }
 DEPENDS = ['active', 'has_raw_products', 'products']
+
+
+class Configuration:
+    __name__ = 'product.configuration'
+    raw_product_prefix = fields.Char('Raw product prefix',
+        help='This prefix will be added to raw product code')
 
 
 class Template:
@@ -69,6 +76,18 @@ class Template:
             return []
         return [p.id for p in self.products if p.is_raw_product]
 
+    @fields.depends('has_raw_products', 'products')
+    def on_change_has_raw_products(self):
+        pool = Pool()
+        Product = pool.get('product.product')
+        res = {}
+        if self.has_raw_products:
+            res['products'] = {'remove': [p.id for p in self.products]}
+        elif not self.products:
+            product = Product.default_get(Product._fields.keys())
+            res['products'] = {'add': [(-1, product)]}
+        return res
+
     @classmethod
     def validate(cls, templates):
         super(Template, cls).validate(templates)
@@ -86,16 +105,46 @@ class Template:
         return new_templates
 
     @classmethod
-    def write(cls, templates, vals):
+    def write(cls, *args):
+        actions = iter(args)
         products_to_create_main_variant = []
-        if vals.get('has_raw_products', False):
-            for template in templates:
-                products_to_create_main_variant = (
-                    template.prepare_raw_products_vals())
-        super(Template, cls).write(templates, vals)
+        for templates, vals in zip(actions, actions):
+            if vals.get('has_raw_products', False):
+                for template in templates:
+                    to_create = template.prepare_raw_products_vals()
+                    if to_create:
+                        products_to_create_main_variant.extend(to_create)
+        super(Template, cls).write(*args)
         if products_to_create_main_variant:
             for product in products_to_create_main_variant:
                 product.create_main_product()
+
+    @classmethod
+    def delete(cls, templates):
+        pool = Pool()
+        Product = pool.get('product.product')
+        to_delete = []
+        for template in templates:
+            if template.has_raw_products:
+                to_delete.extend(list(template.main_products))
+        if to_delete:
+            Product.delete(to_delete)
+        super(Template, cls).delete(templates)
+
+    @classmethod
+    def copy(cls, templates, defaults=None):
+        if defaults is None:
+            defaults = {}
+        defaults = defaults.copy()
+        raw_templates = [t for t in templates if t.has_raw_products]
+        not_raw_templates = [t for t in templates if not t.has_raw_products]
+        raw_defaults = defaults.copy()
+        raw_defaults.setdefault('products', [])
+        if raw_templates:
+            new_raw = super(Template, cls).copy(raw_templates, raw_defaults)
+        if not_raw_templates:
+            new_main = super(Template, cls).copy(not_raw_templates, defaults)
+        return new_raw + new_main
 
     def prepare_raw_products_vals(self):
         Product = Pool().get('product.product')
@@ -127,8 +176,9 @@ class Template:
                     'has_raw_products': True,
                     'is_raw_product': True,
                     })
-            for i, product in enumerate(products_missing_raw_variant):
-                product.raw_product = missing_raw_products[i]
+            for raw_product, product in izip(missing_raw_products,
+                    products_missing_raw_variant):
+                product.raw_product = raw_product
                 product.save()
         logging.getLogger(self.__name__).info(
             "create_missing_raw_products() finished")
@@ -140,14 +190,15 @@ class Product:
 
     has_raw_products = fields.Function(fields.Boolean('Has Raw Variants'),
         'on_change_with_has_raw_products', searcher='search_has_raw_products')
-    is_raw_product = fields.Boolean('Is Raw Variant', states={
+    is_raw_product = fields.Boolean('Is Raw Variant', readonly=True,
+        states={
             'invisible': And(~Eval('_parent_template',
                     {}).get('has_raw_products', False),
                 ~Eval('has_raw_products', False)),
-            'readonly': Bool(Eval('main_product', 0)),
             }, depends=['has_raw_products'])
     raw_product = fields.One2One('product.product-product.raw_product',
-        'product', 'raw_product', 'Raw Variant', domain=[
+        'product', 'raw_product', 'Raw Variant', readonly=True,
+        domain=[
             ('template', '=', Eval('template')),
             ('has_raw_products', '=', True),
             ('is_raw_product', '=', True),
@@ -220,47 +271,55 @@ class Product:
     def create(cls, vlist):
         pool = Pool()
         Template = pool.get('product.template')
+        Config = pool.get('product.configuration')
+        config = Config.get_singleton()
 
         create_raw_products = not Transaction().context.get(
             'no_create_raw_products', False)
-        if create_raw_products:
-            for vals in vlist:
+        for vals in vlist:
+            if create_raw_products:
                 if vals.get('has_raw_products') or (vals.get('template') and
                         Template(vals['template']).has_raw_products):
-                    if not vals.get('raw_product'):
-                        vals['is_raw_product'] = True
+                    if vals.get('raw_product', False):
+                        vals['is_raw_product'] = False
+            if config and vals.get('is_raw_product', False):
+                vals['code'] = (config.raw_product_prefix +
+                    vals.get('code', ''))
 
         new_products = super(Product, cls).create(vlist)
         if not create_raw_products:
             return new_products
 
-        products_missing_main_product = [p for p in new_products
-            if (p.has_raw_products and p.is_raw_product and
-                not p.main_product)]
-        if not products_missing_main_product:
-            return new_products
-        for product in products_missing_main_product:
-            product.create_main_product()
+        products_missing_raw_product = [p for p in new_products
+            if (p.has_raw_products and not p.is_raw_product and
+                not p.raw_product)]
+        for product in products_missing_raw_product:
+            product.create_raw_product()
         return new_products
 
-    def create_main_product(self):
+    def create_raw_product(self):
         logging.getLogger(self.__name__).info("create_main_product(%s)" % self)
         with Transaction().set_context(no_create_raw_products=True):
-            main_product, = self.copy([self], default={
-                    'is_raw_product': False,
-                    'raw_product': self.id,
+            raw_product, = self.copy([self], default={
+                    'is_raw_product': True,
+                    'main_product': self.id,
                     })
-        return main_product
+        return raw_product
 
     @classmethod
     def delete(cls, products):
+        to_delete = []
         for product in products:
-            if product.has_raw_products and product.main_product:
-                cls.raise_user_error('delete_raw_products_forbidden', {
-                        'raw_product': product.rec_name,
-                        'product': product.main_product,
-                        })
-        super(Product, cls).delete(products)
+            if product.has_raw_products:
+                if product.raw_product:
+                    to_delete.append(product.raw_product)
+                elif product.main_product:
+                    cls.raise_user_error('delete_raw_products_forbidden', {
+                            'raw_product': product.rec_name,
+                            'product': product.main_product,
+                            })
+            to_delete.append(product)
+        super(Product, cls).delete(to_delete)
 
 
 class ProductRawProduct(ModelSQL):

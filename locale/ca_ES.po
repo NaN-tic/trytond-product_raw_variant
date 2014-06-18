@@ -1,0 +1,138 @@
+# 
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "error:product.product-product.raw_product:"
+msgid "The Product must be unique."
+msgstr "El producte ha de ser únic."
+
+msgctxt "error:product.product-product.raw_product:"
+msgid "The RawProduct must be unique."
+msgstr "El producte en cru ha de ser únic."
+
+msgctxt "error:product.product:"
+msgid ""
+"Delete raw products is forbidden.\n"
+"You are trying to delete product \"%(raw_product)s\" but it is defined as Raw Variant for product \"%(product)s\"."
+msgstr "No es pot eliminar productes en cru"
+
+msgctxt "error:product.product:"
+msgid ""
+"The Variant \"%s\" has a Main Variant but it isn't configured as \"Is Raw "
+"Variant\", which doesn't make sense."
+msgstr ""
+"La variant \"%s\" té una variant principal però no està configurat com a "
+"\"Es variant en cru\", cosa que no té sentit."
+
+msgctxt "error:product.product:"
+msgid ""
+"The Variant \"%s\" has a Raw Variant but it is configured as \"Is Raw "
+"Variant\", which doesn't make sense."
+msgstr ""
+"La variant \"%s\" té una variant en cru però no està configurat com a \"Es "
+"variant en cru\", cosa que no té sentit."
+
+msgctxt "error:product.product:"
+msgid ""
+"The Variant \"%s\" has a Raw or Main Variant but its template doesn't have "
+"the mark \"Has Raw Variants\"."
+msgstr ""
+"La variant \"%s\" té una variant principal o en cru però la seva plantilla "
+"no està marcada com a que \"Té variants en cru\"."
+
+msgctxt "field:product.configuration,raw_product_prefix:"
+msgid "Raw product prefix"
+msgstr "Prefix producte en cru"
+
+msgctxt "field:product.product,has_raw_products:"
+msgid "Has Raw Variants"
+msgstr "Té variants en cru"
+
+msgctxt "field:product.product,is_raw_product:"
+msgid "Is Raw Variant"
+msgstr "Es producte en cru"
+
+msgctxt "field:product.product,main_product:"
+msgid "Main Variant"
+msgstr "Variant principal"
+
+msgctxt "field:product.product,raw_product:"
+msgid "Raw Variant"
+msgstr "Variant en cru"
+
+msgctxt "field:product.product-product.raw_product,create_date:"
+msgid "Create Date"
+msgstr "Data de creació"
+
+msgctxt "field:product.product-product.raw_product,create_uid:"
+msgid "Create User"
+msgstr "Usuari de creació"
+
+msgctxt "field:product.product-product.raw_product,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:product.product-product.raw_product,product:"
+msgid "Product"
+msgstr "Productes"
+
+msgctxt "field:product.product-product.raw_product,raw_product:"
+msgid "Raw Product"
+msgstr "Producte en cru"
+
+msgctxt "field:product.product-product.raw_product,rec_name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:product.product-product.raw_product,write_date:"
+msgid "Write Date"
+msgstr "Data modificació"
+
+msgctxt "field:product.product-product.raw_product,write_uid:"
+msgid "Write User"
+msgstr "Usuari modificació"
+
+msgctxt "field:product.template,has_raw_products:"
+msgid "Has Raw Variants"
+msgstr "Té variants en cru"
+
+msgctxt "field:product.template,main_products:"
+msgid "Main Variants"
+msgstr "Variant principal"
+
+msgctxt "field:product.template,raw_products:"
+msgid "Raw Variants"
+msgstr "Variants en cru"
+
+msgctxt "help:product.configuration,raw_product_prefix:"
+msgid "This prefix will be added to raw product code"
+msgstr "Aquest prefix s'afegir al codi del producte en cru"
+
+msgctxt "help:product.template,has_raw_products:"
+msgid ""
+"If you check this option, all variants must to have one and only one raw variant.\n"
+"The system will create it when a variant is created."
+msgstr ""
+"Si es marca aquesta opció, totes les variants han de tenir una i nomes una variant en cru.\n"
+"El sistema la crearà automàticament quan es crea la variant."
+
+msgctxt "model:ir.action.act_window.domain,name:act_product_form_domain_all"
+msgid "All"
+msgstr "Tots"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_product_form_domain_not_raw"
+msgid "Products"
+msgstr "Productes"
+
+msgctxt "model:ir.action.act_window.domain,name:act_product_form_domain_raw"
+msgid "Raw Products"
+msgstr "Productes en cru"
+
+msgctxt "model:product.product-product.raw_product,name:"
+msgid "Product - Raw Product"
+msgstr "Producte - Producte en cru"
+
+msgctxt "view:product.configuration:"
+msgid "Raw products configuration"
+msgstr "Configuració productes en cru"

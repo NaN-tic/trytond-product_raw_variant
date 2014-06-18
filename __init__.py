@@ -6,6 +6,7 @@ from .product import *
 
 def register():
     Pool.register(
+        Configuration,
         Template,
         Product,
         ProductRawProduct,

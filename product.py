@@ -105,21 +105,6 @@ class Template:
         return new_templates
 
     @classmethod
-    def write(cls, *args):
-        actions = iter(args)
-        products_to_create_main_variant = []
-        for templates, vals in zip(actions, actions):
-            if vals.get('has_raw_products', False):
-                for template in templates:
-                    to_create = template.prepare_raw_products_vals()
-                    if to_create:
-                        products_to_create_main_variant.extend(to_create)
-        super(Template, cls).write(*args)
-        if products_to_create_main_variant:
-            for product in products_to_create_main_variant:
-                product.create_main_product()
-
-    @classmethod
     def delete(cls, templates):
         pool = Pool()
         Product = pool.get('product.product')

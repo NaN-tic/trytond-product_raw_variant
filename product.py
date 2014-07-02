@@ -125,10 +125,10 @@ class Template:
         not_raw_templates = [t for t in templates if not t.has_raw_products]
         raw_defaults = defaults.copy()
         raw_defaults.setdefault('products', [])
-        if raw_templates:
-            new_raw = super(Template, cls).copy(raw_templates, raw_defaults)
-        if not_raw_templates:
-            new_main = super(Template, cls).copy(not_raw_templates, defaults)
+        new_raw = (super(Template, cls).copy(raw_templates, raw_defaults)
+            if raw_templates else [])
+        new_main = (super(Template, cls).copy(not_raw_templates, defaults)
+            if not_raw_templates else [])
         return new_raw + new_main
 
     def prepare_raw_products_vals(self):

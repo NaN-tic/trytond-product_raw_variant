@@ -5,7 +5,7 @@
     <xpath expr="/form" position="inside">
         <group id="product_raw_variant" colspan="4">
             <separator id="raw_product_separator"
-                string="Raw products configuration" colspan="4"/>
+                string="Raw variants configuration" colspan="4"/>
             <label name="raw_product_prefix"/>
             <field name="raw_product_prefix"/>
         </group>

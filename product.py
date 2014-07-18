@@ -20,8 +20,8 @@ DEPENDS = ['active', 'has_raw_products', 'products']
 
 class Configuration:
     __name__ = 'product.configuration'
-    raw_product_prefix = fields.Char('Raw product prefix',
-        help='This prefix will be added to raw product code')
+    raw_product_prefix = fields.Char('Raw variant prefix',
+        help='This prefix will be added to raw variant code')
 
 
 class Template:
@@ -221,9 +221,10 @@ class Product:
                     'configured as "Is Raw Variant", which doesn\'t make '
                     'sense.',
                 'delete_raw_products_forbidden':
-                    'Delete raw products is forbidden.\n'
-                    'You are trying to delete product "%(raw_product)s" but '
-                    'it is defined as Raw Variant for product "%(product)s".',
+                    'Delete raw variants is forbidden.\n'
+                    'You are trying to delete the variant "%(raw_product)s" '
+                    'but it is defined as Raw Variant for product '
+                    '"%(product)s".',
                 })
 
     @fields.depends('template')
@@ -308,11 +309,11 @@ class Product:
 
 
 class ProductRawProduct(ModelSQL):
-    'Product - Raw Product'
+    'Main Variant - Raw Variant'
     __name__ = 'product.product-product.raw_product'
-    product = fields.Many2One('product.product', 'Product', ondelete='CASCADE',
-        required=True, select=True)
-    raw_product = fields.Many2One('product.product', 'Raw Product',
+    product = fields.Many2One('product.product', 'Main Variant',
+        ondelete='CASCADE', required=True, select=True)
+    raw_product = fields.Many2One('product.product', 'Raw Variant',
         ondelete='CASCADE', required=True, select=True)
 
     @classmethod
@@ -320,7 +321,7 @@ class ProductRawProduct(ModelSQL):
         super(ProductRawProduct, cls).__setup__()
         cls._sql_constraints += [
             ('product_unique', 'UNIQUE(product)',
-                'The Product must be unique.'),
+                'The Main Variant must be unique.'),
             ('raw_product_unique', 'UNIQUE(raw_product)',
-                'The RawProduct must be unique.'),
+                'The Raw Variant must be unique.'),
             ]

@@ -42,6 +42,10 @@ msgstr ""
 "La variant \"%s\" té una variant principal o sense processar però la seva "
 "plantilla no està marcada com a que \"Té variants sense processar\"."
 
+msgctxt "field:product.configuration,main_product_prefix:"
+msgid "Main variant prefix"
+msgstr "Prefix variant principal"
+
 msgctxt "field:product.configuration,raw_product_prefix:"
 msgid "Raw variant prefix"
 msgstr "Prefix variant sense processar"
@@ -105,6 +109,10 @@ msgstr "Variants principal"
 msgctxt "field:product.template,raw_products:"
 msgid "Raw Variants"
 msgstr "Variants sense processar"
+
+msgctxt "help:product.configuration,main_product_prefix:"
+msgid "This prefix will be added to main variant code"
+msgstr "Aquest prefix s'afegirà al codi de la variant principal"
 
 msgctxt "help:product.configuration,raw_product_prefix:"
 msgid "This prefix will be added to raw variant code"

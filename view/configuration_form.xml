@@ -8,6 +8,8 @@
                 string="Raw variants configuration" colspan="4"/>
             <label name="raw_product_prefix"/>
             <field name="raw_product_prefix"/>
+            <label name="main_product_prefix"/>
+            <field name="main_product_prefix"/>
         </group>
     </xpath>
 </data>

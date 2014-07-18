@@ -42,6 +42,10 @@ msgstr ""
 "La variante \"%s\" tiene una variante principal o una variante sin procesar,"
 " pero su plantilla no tiene la marca de \"Tiene variantes sin procesar\""
 
+msgctxt "field:product.configuration,main_product_prefix:"
+msgid "Main variant prefix"
+msgstr "Prefijo variantes principal"
+
 msgctxt "field:product.configuration,raw_product_prefix:"
 msgid "Raw variant prefix"
 msgstr "Prefijo variantes sin procesar"
@@ -106,6 +110,10 @@ msgctxt "field:product.template,raw_products:"
 msgid "Raw Variants"
 msgstr "Variantes sin procesar"
 
+msgctxt "help:product.configuration,main_product_prefix:"
+msgid "This prefix will be added to main variant code"
+msgstr "Se añadirá este prefijo al código de la variante principal"
+
 msgctxt "help:product.configuration,raw_product_prefix:"
 msgid "This prefix will be added to raw variant code"
 msgstr "Se añadirá este prefijo al código de la variante sin procesar"
@@ -124,7 +132,7 @@ msgstr "Todos"
 
 msgctxt ""
 "model:ir.action.act_window.domain,name:act_product_form_domain_not_raw"
-msgid "Main Variants"
+msgid "Products"
 msgstr "Variantes principales"
 
 msgctxt "model:ir.action.act_window.domain,name:act_product_form_domain_raw"

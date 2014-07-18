@@ -22,6 +22,8 @@ class Configuration:
     __name__ = 'product.configuration'
     raw_product_prefix = fields.Char('Raw variant prefix',
         help='This prefix will be added to raw variant code')
+    main_product_prefix = fields.Char('Main variant prefix',
+        help='This prefix will be added to main variant code')
 
 
 class Template:
@@ -263,14 +265,18 @@ class Product:
         create_raw_products = not Transaction().context.get(
             'no_create_raw_products', False)
         for vals in vlist:
-            if create_raw_products:
-                if vals.get('has_raw_products') or (vals.get('template') and
-                        Template(vals['template']).has_raw_products):
-                    if vals.get('raw_product', False):
-                        vals['is_raw_product'] = False
-            if config and vals.get('is_raw_product', False):
-                vals['code'] = (config.raw_product_prefix +
-                    vals.get('code', ''))
+            if vals.get('has_raw_products') or (vals.get('template') and
+                    Template(vals['template']).has_raw_products):
+                if (vals.get('raw_product', False) or (
+                            not vals.get('main_product') and
+                            not vals.get('is_raw_product'))):
+                    vals['is_raw_product'] = False
+                    if config:
+                        vals['code'] = (config.main_product_prefix +
+                            vals.get('code', ''))
+                if config and vals.get('is_raw_product', False):
+                    vals['code'] = (config.raw_product_prefix +
+                        vals.get('code', ''))
 
         new_products = super(Product, cls).create(vlist)
         if not create_raw_products:
@@ -284,9 +290,14 @@ class Product:
         return new_products
 
     def create_raw_product(self):
+        pool = Pool()
+        Config = pool.get('product.configuration')
+        config = Config.get_singleton()
+
         logging.getLogger(self.__name__).info("create_main_product(%s)" % self)
         with Transaction().set_context(no_create_raw_products=True):
             raw_product, = self.copy([self], default={
+                    'code': self.code.replace(config.main_product_prefix, ''),
                     'is_raw_product': True,
                     'main_product': self.id,
                     })

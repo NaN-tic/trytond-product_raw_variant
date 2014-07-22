@@ -271,10 +271,11 @@ class Product:
                             not vals.get('main_product') and
                             not vals.get('is_raw_product'))):
                     vals['is_raw_product'] = False
-                    if config:
+                    if config and config.main_product_prefix:
                         vals['code'] = (config.main_product_prefix +
                             vals.get('code', ''))
-                if config and vals.get('is_raw_product', False):
+                if (config and vals.get('is_raw_product', False) and
+                        config.raw_product_prefix):
                     vals['code'] = (config.raw_product_prefix +
                         vals.get('code', ''))
 
@@ -297,7 +298,8 @@ class Product:
         logging.getLogger(self.__name__).info("create_main_product(%s)" % self)
         with Transaction().set_context(no_create_raw_products=True):
             raw_product, = self.copy([self], default={
-                    'code': self.code.replace(config.main_product_prefix, ''),
+                    'code': self.code.replace(config.main_product_prefix, '')
+                        if config.main_product_prefix else self.code,
                     'is_raw_product': True,
                     'main_product': self.id,
                     })

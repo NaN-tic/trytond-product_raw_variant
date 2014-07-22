@@ -1,4 +1,3 @@
-Version 3.2.1 - 2014-07-18
 * Change spanish/catalan translation for raw variants
 * Make more uniform the use of main/raw variant in UX
 * Add main_product_prefix configuration field and used when create variants

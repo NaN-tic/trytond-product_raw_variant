@@ -97,6 +97,50 @@ class Template:
             for product in template.products:
                 product.check_raw_product()
 
+    def update_variant_product(self, products, variant):
+        """
+        Compatibility with product_variant module (extras_depend)
+        """
+        Config = Pool().get('product.configuration')
+        config = Config(1)
+
+        def _super_call_with_prefix(products_sublist, prefix):
+            if not products_sublist or not prefix:
+                return
+            with Transaction().set_context(product_raw_variant_prefix=prefix):
+                super(Template, self).update_variant_product(products_sublist,
+                    variant)
+                for product in products_sublist:
+                    products.remove(product)
+
+        if self.has_raw_products:
+            if config.main_product_prefix:
+                main_products = tuple(p for p in products
+                    if not p.is_raw_product)
+                _super_call_with_prefix(main_products,
+                    config.main_product_prefix)
+            if config.raw_product_prefix:
+                raw_products = tuple(p for p in products if p.is_raw_product)
+                _super_call_with_prefix(raw_products,
+                    config.raw_product_prefix)
+
+        if products:
+            super(Template, self).update_variant_product(products,
+                variant)
+
+
+    @classmethod
+    def create_variant_code(cls, basecode, variant):
+        """
+        Compatibility with product_variant module (extras_depend)
+        """
+        code = super(Template, cls).create_variant_code(basecode, variant)
+
+        prefix = Transaction().context.get('product_raw_variant_prefix')
+        if prefix:
+            code = prefix + code
+        return code
+
     @classmethod
     def create(cls, vlist):
         new_templates = super(Template, cls).create(vlist)

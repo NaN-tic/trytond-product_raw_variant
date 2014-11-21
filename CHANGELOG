@@ -1,4 +1,5 @@
 Version 3.4.0 - 2014-11-03
+* Add product_variant as extras_depend and implement compatibility
 * Change spanish/catalan translation for raw variants
 * Make more uniform the use of main/raw variant in UX
 * Add main_product_prefix configuration field and used when create variants

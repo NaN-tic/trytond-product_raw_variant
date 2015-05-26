@@ -267,17 +267,18 @@ class Product:
         for vals in vlist:
             if vals.get('has_raw_products') or (vals.get('template') and
                     Template(vals['template']).has_raw_products):
+                code = vals.get('code')
+                if code is None:
+                    code = ''
                 if (vals.get('raw_product', False) or (
                             not vals.get('main_product') and
                             not vals.get('is_raw_product'))):
                     vals['is_raw_product'] = False
                     if config and config.main_product_prefix:
-                        vals['code'] = (config.main_product_prefix +
-                            vals.get('code', ''))
+                        vals['code'] = config.main_product_prefix + code
                 if (config and vals.get('is_raw_product', False) and
                         config.raw_product_prefix):
-                    vals['code'] = (config.raw_product_prefix +
-                        vals.get('code', ''))
+                    vals['code'] = config.raw_product_prefix + code
 
         new_products = super(Product, cls).create(vlist)
         if not create_raw_products:

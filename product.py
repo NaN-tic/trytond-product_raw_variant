@@ -133,19 +133,6 @@ class Template:
             if not_raw_templates else [])
         return new_raw + new_main
 
-    def prepare_raw_products_vals(self):
-        Product = Pool().get('product.product')
-
-        products_missing_raw_variant = [p for p in self.products
-            if not p.raw_product and not p.is_raw_product]
-        if not products_missing_raw_variant:
-            return None
-
-        Product.write(products_missing_raw_variant, {
-                    'is_raw_product': True,
-                    })
-        return products_missing_raw_variant
-
     def create_missing_raw_products(self):
         Product = Pool().get('product.product')
 
@@ -296,7 +283,7 @@ class Product:
         Config = pool.get('product.configuration')
         config = Config.get_singleton()
 
-        logging.getLogger(self.__name__).info("create_main_product(%s)" % self)
+        logging.getLogger(self.__name__).info("create_raw_product(%s)" % self)
         with Transaction().set_context(no_create_raw_products=True):
             code = self.code
             if config and config.main_product_prefix and code:

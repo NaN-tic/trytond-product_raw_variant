@@ -15,6 +15,8 @@ identificarlos como el mismo producto.
    :field: main_products
    :domain: [['has_raw_products', '=', 'True']]
 
+   Captura de pantalla de la plantilla de productos
+
 Si marcamos el campo |has_raw_products| se nos esconderá la vista habitual de
 las variantes del producto apareciendo en su lugar dos listas: |main_products|
 y |raw_products|, de las cuales sólo |main_products| es editable.

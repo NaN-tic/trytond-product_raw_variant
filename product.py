@@ -80,15 +80,11 @@ class Template:
 
     @fields.depends('has_raw_products', 'products')
     def on_change_has_raw_products(self):
-        pool = Pool()
-        Product = pool.get('product.product')
-        res = {}
+        Product = Pool().get('product.product')
         if self.has_raw_products:
-            res['products'] = {'remove': [p.id for p in self.products]}
+            self.products = []
         elif not self.products:
-            product = Product.default_get(Product._fields.keys())
-            res['products'] = {'add': [(-1, product)]}
-        return res
+            self.products = Product.default_get(Product._fields.keys())
 
     @classmethod
     def validate(cls, templates):

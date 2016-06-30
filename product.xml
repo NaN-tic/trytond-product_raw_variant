@@ -6,23 +6,23 @@
 
         <record model="ir.ui.view" id="product_configuration_view_form">
             <field name="model">product.configuration</field>
-            <field name="type">form</field>
-            <field name="name">configuration_form</field>
+            <field name="type" eval="None"/>
             <field name="inherit"
                 ref="product_configuration.product_configuration_view_form"/>
+            <field name="name">configuration_form</field>
         </record>
 
         <record model="ir.ui.view" id="template_view_form">
             <field name="model">product.template</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="product.template_view_form"/>
-            <field name="type">form</field>
             <field name="name">template_form</field>
         </record>
 
         <record model="ir.ui.view" id="product_view_form">
             <field name="model">product.product</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="product.product_view_form"/>
-            <field name="type">form</field>
             <field name="name">product_form</field>
         </record>
 
@@ -31,14 +31,18 @@
             <field name="name">Main Variants</field>
             <field name="act_window" ref="product.act_product_form"/>
             <field name="sequence" eval="10"/>
-            <field name="domain">['OR', [('has_raw_products', '=', False)], [('is_raw_product', '=', False)]]</field>
+            <field name="domain"
+                eval="['OR', [('has_raw_products', '=', False)], [('is_raw_product', '=', False)]]"
+                pyson="1"/>
         </record>
         <record model="ir.action.act_window.domain"
                 id="act_product_form_domain_raw">
             <field name="name">Raw Variants</field>
             <field name="act_window" ref="product.act_product_form"/>
             <field name="sequence" eval="20"/>
-            <field name="domain">[('has_raw_products', '=', True), ('is_raw_product', '=', True)]</field>
+            <field name="domain"
+                eval="[('has_raw_products', '=', True), ('is_raw_product', '=', True)]"
+                pyson="1"/>
         </record>
         <record model="ir.action.act_window.domain"
                 id="act_product_form_domain_all">

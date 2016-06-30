@@ -15,7 +15,7 @@ STATES = {
     'readonly': ~Eval('active', True),
     'invisible': ~Eval('has_raw_products', False),
     }
-DEPENDS = ['active', 'has_raw_products', 'products']
+DEPENDS = ['active', 'has_raw_products']
 
 
 class Configuration:

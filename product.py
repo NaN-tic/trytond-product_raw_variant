@@ -3,7 +3,7 @@
 import logging
 from itertools import izip
 
-from trytond.model import ModelSQL, fields
+from trytond.model import ModelSQL, fields, Unique
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import And, Bool, Eval, Or
 from trytond.transaction import Transaction
@@ -362,9 +362,10 @@ class ProductRawProduct(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(ProductRawProduct, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('product_unique', 'UNIQUE(product)',
+            ('product_unique', Unique(t, t.product),
                 'The Main Variant must be unique.'),
-            ('raw_product_unique', 'UNIQUE(raw_product)',
+            ('raw_product_unique', Unique(t, t.raw_product),
                 'The Raw Variant must be unique.'),
             ]

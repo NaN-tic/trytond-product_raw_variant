@@ -7,8 +7,7 @@
         <record model="ir.ui.view" id="product_configuration_view_form">
             <field name="model">product.configuration</field>
             <field name="type" eval="None"/>
-            <field name="inherit"
-                ref="product_configuration.product_configuration_view_form"/>
+            <field name="inherit" ref="product.product_configuration_view_form"/>
             <field name="name">configuration_form</field>
         </record>
 

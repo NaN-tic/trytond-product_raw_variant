@@ -6,7 +6,9 @@
         <label name="has_raw_products"/>
         <field name="has_raw_products"/>
         <newline/>
-        <field name="main_products" mode="tree,form" colspan="2"/>
-        <field name="raw_products" mode="tree,form" colspan="2"/>
+        <field name="main_products" colspan="2"
+            view_ids="product.product_view_tree_simple,product.product_view_form_simple"/>
+        <field name="raw_products" colspan="2"
+            view_ids="product.product_view_tree_simple,product.product_view_form_simple"/>
     </xpath>
 </data>

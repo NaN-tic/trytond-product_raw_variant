@@ -16,6 +16,7 @@ STATES = {
     'invisible': ~Eval('has_raw_products', False),
     }
 DEPENDS = ['active', 'has_raw_products']
+logger = logging.getLogger(__name__)
 
 
 class Configuration:
@@ -84,7 +85,10 @@ class Template:
         if self.has_raw_products:
             self.products = []
         elif not self.products:
-            self.products = Product.default_get(Product._fields.keys())
+            fields_names = list(f for f in Product._fields.keys()
+                if f not in ('id', 'create_uid', 'create_date',
+                    'write_uid', 'write_date'))
+            self.products = Product.default_get(fields_names)
 
     @classmethod
     def validate(cls, templates):
@@ -123,7 +127,6 @@ class Template:
         if products:
             super(Template, self).update_variant_product(products,
                 variant)
-
 
     @classmethod
     def create_variant_code(cls, basecode, variant):
@@ -176,14 +179,15 @@ class Template:
     def create_missing_raw_products(self):
         Product = Pool().get('product.product')
 
-        logging.getLogger(self.__name__).info("create_missing_raw_products()")
+        logger.info("Start create missing raw products")
+
         products_missing_raw_variant = [p for p in self.products
             if not p.raw_product and not p.is_raw_product]
         if not products_missing_raw_variant:
             return {}
 
         with Transaction().set_context(no_create_raw_products=True):
-            logging.getLogger(self.__name__).info("copying %d products"
+            logger.info("copying %d products"
                 % len(products_missing_raw_variant))
             missing_raw_products = Product.copy(products_missing_raw_variant,
                 default={
@@ -194,8 +198,9 @@ class Template:
                     products_missing_raw_variant):
                 product.raw_product = raw_product
                 product.save()
-        logging.getLogger(self.__name__).info(
-            "create_missing_raw_products() finished")
+
+        logger.info("End create missing raw products")
+
         return missing_raw_products
 
 
@@ -323,7 +328,8 @@ class Product:
         Config = pool.get('product.configuration')
         config = Config.get_singleton()
 
-        logging.getLogger(self.__name__).info("create_raw_product(%s)" % self)
+        logger.info('Create raw product: %s.' % (self.rec_name))
+
         with Transaction().set_context(no_create_raw_products=True):
             code = self.code
             if config and config.main_product_prefix and code:

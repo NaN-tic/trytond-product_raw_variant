@@ -88,7 +88,7 @@ class Template:
             fields_names = list(f for f in Product._fields.keys()
                 if f not in ('id', 'create_uid', 'create_date',
                     'write_uid', 'write_date'))
-            self.products = Product.default_get(fields_names)
+            self.products = [Product.default_get(fields_names)]
 
     @classmethod
     def validate(cls, templates):

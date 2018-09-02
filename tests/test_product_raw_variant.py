@@ -12,9 +12,6 @@ class TestCase(ModuleTestCase):
     'Test module'
     module = 'product_raw_variant'
 
-    def setUp(self):
-        trytond.tests.test_tryton.install_module('product_raw_variant')
-
     @with_transaction()
     def test0010_raw_variant_creation(self):
         pool = Pool()

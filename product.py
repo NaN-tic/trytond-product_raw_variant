@@ -1,7 +1,7 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 import logging
-from itertools import izip
+
 
 from trytond.model import ModelSQL, fields, Unique
 from trytond.pool import Pool, PoolMeta
@@ -9,7 +9,6 @@ from trytond.pyson import And, Bool, Eval, Or
 from trytond.transaction import Transaction
 
 __all__ = ['Configuration', 'Template', 'Product', 'ProductRawProduct']
-__metaclass__ = PoolMeta
 
 STATES = {
     'readonly': ~Eval('active', True),
@@ -19,7 +18,7 @@ DEPENDS = ['active', 'has_raw_products']
 logger = logging.getLogger(__name__)
 
 
-class Configuration:
+class Configuration(metaclass=PoolMeta):
     __name__ = 'product.configuration'
     raw_product_prefix = fields.Char('Raw variant prefix',
         help='This prefix will be added to raw variant code')
@@ -27,7 +26,7 @@ class Configuration:
         help='This prefix will be added to main variant code')
 
 
-class Template:
+class Template(metaclass=PoolMeta):
     __name__ = 'product.template'
 
     has_raw_products = fields.Boolean('Has Raw Variants',
@@ -85,9 +84,9 @@ class Template:
         if self.has_raw_products:
             self.products = []
         elif not self.products:
-            fields_names = list(f for f in Product._fields.keys()
+            fields_names = [f for f in Product._fields.keys()
                 if f not in ('id', 'create_uid', 'create_date',
-                    'write_uid', 'write_date'))
+                    'write_uid', 'write_date')]
             self.products = [Product.default_get(fields_names)]
 
     @classmethod
@@ -194,7 +193,7 @@ class Template:
                     'has_raw_products': True,
                     'is_raw_product': True,
                     })
-            for raw_product, product in izip(missing_raw_products,
+            for raw_product, product in zip(missing_raw_products,
                     products_missing_raw_variant):
                 product.raw_product = raw_product
                 product.save()
@@ -204,7 +203,7 @@ class Template:
         return missing_raw_products
 
 
-class Product:
+class Product(metaclass=PoolMeta):
     __name__ = 'product.product'
 
     has_raw_products = fields.Function(fields.Boolean('Has Raw Variants'),

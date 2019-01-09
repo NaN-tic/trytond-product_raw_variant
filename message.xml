@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<tryton>
+    <data group="1">
+        <record model="ir.message" id="unexpected_raw_or_main_product">
+            <field name="text">The Variant "%(product)s" has a Raw or Main Variant but its template doesn\'t have the mark "Has Raw Variants".</field>
+        </record>
+        <record model="ir.message" id="unexpected_raw_product">
+            <field name="text">The Variant "%(product)s" has a Raw Variant but it is configured as "Is Raw Variant", which doesn\'t make sense.</field>
+        </record>
+        <record model="ir.message" id="unexpected_main_product">
+            <field name="text">The Variant "%(product)s" has a Main Variant but it isn\'t configured as "Is Raw Variant", which doesn\'t make sense.</field>
+        </record>
+        <record model="ir.message" id="delete_raw_products_forbidden">
+            <field name="text">Delete raw variants is forbidden.\n You are trying to delete the variant "%(raw_product)s" but it is defined as Raw Variant for product"%(product)s".</field>
+        </record>
+    </data>
+</tryton>

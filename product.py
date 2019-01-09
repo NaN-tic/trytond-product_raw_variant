@@ -2,11 +2,13 @@
 # copyright notices and license terms.
 import logging
 
-
 from trytond.model import ModelSQL, fields, Unique
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import And, Bool, Eval, Or
 from trytond.transaction import Transaction
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
+
 
 __all__ = ['Configuration', 'Template', 'Product', 'ProductRawProduct']
 
@@ -239,27 +241,6 @@ class Product(metaclass=PoolMeta):
                 ~Bool(Eval('is_raw_product'))),
             }, depends=['has_raw_products', 'is_raw_product'])
 
-    @classmethod
-    def __setup__(cls):
-        super(Product, cls).__setup__()
-        cls._error_messages.update({
-                'unexpected_raw_or_main_product':
-                    'The Variant "%s" has a Raw or Main Variant but its '
-                    'template doesn\'t have the mark "Has Raw Variants".',
-                'unexpected_raw_product':
-                    'The Variant "%s" has a Raw Variant but it is configured '
-                    'as "Is Raw Variant", which doesn\'t make sense.',
-                'unexpected_main_product':
-                    'The Variant "%s" has a Main Variant but it isn\'t '
-                    'configured as "Is Raw Variant", which doesn\'t make '
-                    'sense.',
-                'delete_raw_products_forbidden':
-                    'Delete raw variants is forbidden.\n'
-                    'You are trying to delete the variant "%(raw_product)s" '
-                    'but it is defined as Raw Variant for product '
-                    '"%(product)s".',
-                })
-
     @fields.depends('template')
     def on_change_with_has_raw_products(self, name=None):
         return self.template and self.template.has_raw_products or False
@@ -277,14 +258,19 @@ class Product(metaclass=PoolMeta):
     def check_raw_product(self):
         if (not self.has_raw_products and
                 (self.raw_product or self.main_product)):
-            self.raise_user_error('unexpected_raw_or_main_product',
-                (self.rec_name,))
+            raise UserError(gettext(
+                'product_raw_variant.unexpected_raw_or_main_product',
+                product=self.rec_name))
         if not self.has_raw_products:
             return
         if self.is_raw_product and self.raw_product:
-            self.raise_user_error('unexpected_raw_product', (self.rec_name,))
+            raise UserError(gettext(
+                'product_raw_variant.unexpected_raw_product',
+                product=self.rec_name))
         if not self.is_raw_product and self.main_product:
-            self.raise_user_error('unexpected_main_product', (self.rec_name,))
+            raise UserError(gettext(
+                'product_raw_variant.unexpected_main_product',
+                product=self.rec_name))
 
     @classmethod
     def create(cls, vlist):
@@ -348,10 +334,10 @@ class Product(metaclass=PoolMeta):
                 if product.raw_product:
                     to_delete.append(product.raw_product)
                 elif product.main_product:
-                    cls.raise_user_error('delete_raw_products_forbidden', {
-                            'raw_product': product.rec_name,
-                            'product': product.main_product,
-                            })
+                    raise UserError(gettext(
+                        'product_raw_variant.delete_raw_products_forbidden',
+                            raw_product=product.rec_name,
+                            product=product.main_product))
             to_delete.append(product)
         super(Product, cls).delete(to_delete)
 

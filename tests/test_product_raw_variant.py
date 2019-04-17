@@ -30,11 +30,10 @@ class TestCase(ModuleTestCase):
                     'name': 'Test Product Raw',
                     'type': 'goods',
                     'list_price': Decimal(1),
-                    'cost_price': Decimal(0),
                     'cost_price_method': 'fixed',
                     'default_uom': unit.id,
                     'has_raw_products': True,
-                    'main_products': [('create', [{
+                     'main_products': [('create', [{
                                     'code': '10',
                                     }])],
                     }])

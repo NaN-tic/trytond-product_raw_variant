@@ -35,15 +35,15 @@ class Template(metaclass=PoolMeta):
         help='If you check this option, all variants must to have one and '
         'only one raw variant.\n'
         'The system will create it when a variant is created.')
-    main_products = fields.Function(fields.One2Many('product.product',
-            'template', 'Main Variants', domain=[
+    main_products = fields.Function(fields.Many2Many('product.product',
+            'template', None, 'Main Variants', domain=[
                 ('is_raw_product', '=', False),
                 ], states=STATES, depends=DEPENDS, context={
                 'no_create_raw_products': True,
                 }),
         'get_main_products', setter='set_main_products')
-    raw_products = fields.Function(fields.One2Many('product.product',
-            'template', 'Raw Variants', domain=[
+    raw_products = fields.Function(fields.Many2Many('product.product',
+            'template', None, 'Raw Variants', domain=[
                 ('is_raw_product', '=', True),
                 ], states=STATES, depends=DEPENDS),
         'get_raw_products')
@@ -145,9 +145,8 @@ class Template(metaclass=PoolMeta):
     def create(cls, vlist):
         new_templates = super(Template, cls).create(vlist)
         for template in new_templates:
-            if not template.has_raw_products:
-                continue
-            template.create_missing_raw_products()
+            if  template.has_raw_products:
+                template.create_missing_raw_products()
         return new_templates
 
     @classmethod

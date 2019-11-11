@@ -240,7 +240,7 @@ class Product(metaclass=PoolMeta):
                 ~Bool(Eval('is_raw_product'))),
             }, depends=['has_raw_products', 'is_raw_product'])
 
-    @fields.depends('template')
+    @fields.depends('template', '_parent_template.has_raw_products')
     def on_change_with_has_raw_products(self, name=None):
         return self.template and self.template.has_raw_products or False
 

@@ -99,9 +99,7 @@ class Template(metaclass=PoolMeta):
                 product.check_raw_product()
 
     def update_variant_product(self, products, variant):
-        """
-        Compatibility with product_variant module (extras_depend)
-        """
+        # Compatibility with product_variant module (extras_depend)
         Config = Pool().get('product.configuration')
         config = Config(1)
 
@@ -130,11 +128,9 @@ class Template(metaclass=PoolMeta):
                 variant)
 
     @classmethod
-    def create_variant_code(cls, basecode, variant):
-        """
-        Compatibility with product_variant module (extras_depend)
-        """
-        code = super(Template, cls).create_variant_code(basecode, variant)
+    def create_variant_code(cls, variant):
+        # Compatibility with product_variant module (extras_depend)
+        code = super().create_variant_code(variant)
 
         prefix = Transaction().context.get('product_raw_variant_prefix')
         if prefix:
@@ -249,6 +245,27 @@ class Product(metaclass=PoolMeta):
         return [('template.has_raw_products', ) + tuple(clause[1:])]
 
     @classmethod
+    def sync_code(cls, products):
+        Configuration = Pool().get('product.configuration')
+        config = Configuration(1)
+
+        for product in products:
+            # has_raw_product code from raw_product_prefix or main_product_prefix
+            if product.template.has_raw_products:
+                code = None
+                if product.is_raw_product and config.raw_product_prefix:
+                    code = ''.join(filter(None, [
+                                config.raw_product_prefix, product.suffix_code]))
+                elif config.main_product_prefix:
+                    code = ''.join(filter(None, [
+                                config.main_product_prefix, product.suffix_code]))
+                if code != product.code:
+                    product.code = code
+                cls.save(products)
+            else:
+                super().sync_code(products)
+
+    @classmethod
     def validate(cls, products):
         super(Product, cls).validate(products)
         for product in products:
@@ -280,22 +297,6 @@ class Product(metaclass=PoolMeta):
 
         create_raw_products = not Transaction().context.get(
             'no_create_raw_products', False)
-        for vals in vlist:
-            if vals.get('has_raw_products') or (vals.get('template') and
-                    Template(vals['template']).has_raw_products):
-                code = vals.get('code')
-                if code is None:
-                    code = ''
-                if (vals.get('raw_product', False) or (
-                            not vals.get('main_product') and
-                            not vals.get('is_raw_product'))):
-                    vals['is_raw_product'] = False
-                    if config and config.main_product_prefix:
-                        vals['code'] = config.main_product_prefix + code
-                if (config and vals.get('is_raw_product', False) and
-                        config.raw_product_prefix):
-                    vals['code'] = config.raw_product_prefix + code
-
         new_products = super(Product, cls).create(vlist)
         if not create_raw_products:
             return new_products
@@ -315,14 +316,12 @@ class Product(metaclass=PoolMeta):
         logger.info('Create raw product: %s.' % (self.rec_name))
 
         with Transaction().set_context(no_create_raw_products=True):
-            code = self.code
-            if config and config.main_product_prefix and code:
-                code = code.replace(config.main_product_prefix, '')
             raw_product, = self.copy([self], default={
-                    'code': code,
+                    'suffix_code': self.suffix_code,
                     'is_raw_product': True,
                     'main_product': self.id,
                     })
+            self.sync_code([raw_product])
         return raw_product
 
     @classmethod

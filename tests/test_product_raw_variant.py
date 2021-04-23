@@ -33,8 +33,8 @@ class TestCase(ModuleTestCase):
                     'cost_price_method': 'fixed',
                     'default_uom': unit.id,
                     'has_raw_products': True,
-                     'main_products': [('create', [{
-                                    'code': '10',
+                    'main_products': [('create', [{
+                                    'suffix_code': '10',
                                     }])],
                     }])
         raw_product, = template.raw_products
@@ -43,7 +43,7 @@ class TestCase(ModuleTestCase):
         self.assertEqual(main_product.code, 'MAIN10')
         Product.create([{
                     'template': template.id,
-                    'code': '11',
+                    'suffix_code': '11',
                     }])
         template = Template(template.id)
         raw_product, new_raw_product = template.raw_products

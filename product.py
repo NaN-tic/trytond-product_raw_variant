@@ -259,6 +259,9 @@ class Product(metaclass=PoolMeta):
                 elif config.main_product_prefix:
                     code = ''.join(filter(None, [
                                 config.main_product_prefix, product.suffix_code]))
+                else:
+                    code = ''.join(filter(None, [
+                                product.prefix_code, product.suffix_code]))
                 if code != product.code:
                     product.code = code
                 cls.save(products)

@@ -293,11 +293,6 @@ class Product(metaclass=PoolMeta):
 
     @classmethod
     def create(cls, vlist):
-        pool = Pool()
-        Template = pool.get('product.template')
-        Config = pool.get('product.configuration')
-        config = Config.get_singleton()
-
         create_raw_products = not Transaction().context.get(
             'no_create_raw_products', False)
         new_products = super(Product, cls).create(vlist)
@@ -312,10 +307,6 @@ class Product(metaclass=PoolMeta):
         return new_products
 
     def create_raw_product(self):
-        pool = Pool()
-        Config = pool.get('product.configuration')
-        config = Config.get_singleton()
-
         logger.info('Create raw product: %s.' % (self.rec_name))
 
         with Transaction().set_context(no_create_raw_products=True):

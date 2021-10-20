@@ -29,7 +29,6 @@ class TestCase(ModuleTestCase):
         template, = Template.create([{
                     'name': 'Test Product Raw',
                     'type': 'goods',
-                    'list_price': Decimal(1),
                     'cost_price_method': 'fixed',
                     'default_uom': unit.id,
                     'has_raw_products': True,

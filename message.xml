@@ -13,7 +13,9 @@ this repository contains the full copyright notices and license terms. -->
             <field name="text">The Variant "%(product)s" has a Main Variant but it isn\'t configured as "Is Raw Variant", which doesn\'t make sense.</field>
         </record>
         <record model="ir.message" id="delete_raw_products_forbidden">
-            <field name="text">Delete raw variants is forbidden.\n You are trying to delete the variant "%(raw_product)s" but it is defined as Raw Variant for product"%(product)s".</field>
+            <field name="text">Delete raw variants is forbidden.
+
+You are trying to delete the variant "%(raw_product)s" but it is defined as Raw Variant for product"%(product)s".</field>
         </record>
     </data>
 </tryton>

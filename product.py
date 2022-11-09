@@ -338,9 +338,9 @@ class ProductRawProduct(ModelSQL):
     'Main Variant - Raw Variant'
     __name__ = 'product.product-product.raw_product'
     product = fields.Many2One('product.product', 'Main Variant',
-        ondelete='CASCADE', required=True, select=True)
+        ondelete='CASCADE', required=True)
     raw_product = fields.Many2One('product.product', 'Raw Variant',
-        ondelete='CASCADE', required=True, select=True)
+        ondelete='CASCADE', required=True)
 
     @classmethod
     def __setup__(cls):

@@ -38,14 +38,14 @@ class Template(metaclass=PoolMeta):
     main_products = fields.Function(fields.Many2Many('product.product',
             'template', None, 'Main Variants', domain=[
                 ('is_raw_product', '=', False),
-                ], states=STATES, depends=DEPENDS, context={
+                ], states=STATES, context={
                 'no_create_raw_products': True,
                 }),
         'get_main_products', setter='set_main_products')
     raw_products = fields.Function(fields.Many2Many('product.product',
             'template', None, 'Raw Variants', domain=[
                 ('is_raw_product', '=', True),
-                ], states=STATES, depends=DEPENDS),
+                ], states=STATES),
         'get_raw_products')
 
     @classmethod
@@ -210,7 +210,7 @@ class Product(metaclass=PoolMeta):
             'invisible': And(~Eval('_parent_template',
                     {}).get('has_raw_products', False),
                 ~Eval('has_raw_products', False)),
-            }, depends=['has_raw_products'])
+            })
     raw_product = fields.One2One('product.product-product.raw_product',
         'product', 'raw_product', 'Raw Variant', readonly=True,
         domain=[
@@ -225,8 +225,7 @@ class Product(metaclass=PoolMeta):
                         False),
                     ~Eval('has_raw_products', False)),
                 Eval('is_raw_product', False)),
-            },
-        depends=['template', 'id', 'has_raw_products', 'is_raw_product'])
+            })
     main_product = fields.One2One('product.product-product.raw_product',
         'raw_product', 'product', 'Main Variant', readonly=True, states={
             'invisible': Or(
@@ -234,7 +233,7 @@ class Product(metaclass=PoolMeta):
                         False),
                     ~Eval('has_raw_products', False)),
                 ~Bool(Eval('is_raw_product'))),
-            }, depends=['has_raw_products', 'is_raw_product'])
+            })
 
     @fields.depends('template', '_parent_template.has_raw_products')
     def on_change_with_has_raw_products(self, name=None):

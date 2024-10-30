@@ -26,6 +26,8 @@ class Configuration(metaclass=PoolMeta):
         help='This prefix will be added to raw variant code')
     main_product_prefix = fields.Char('Main variant prefix',
         help='This prefix will be added to main variant code')
+    prefix_sufix_separator = fields.Char('Prefis Sufix Separator',
+        help='This separator will be added between prefix and sufix')
 
 
 class Template(metaclass=PoolMeta):
@@ -248,24 +250,35 @@ class Product(metaclass=PoolMeta):
         Configuration = Pool().get('product.configuration')
         config = Configuration(1)
 
+        to_super = []
+        to_save = []
         for product in products:
             # has_raw_product code from raw_product_prefix or main_product_prefix
-            if product.template.has_raw_products:
-                code = None
-                if product.is_raw_product and config.raw_product_prefix:
-                    code = ''.join(filter(None, [
-                                config.raw_product_prefix, product.suffix_code]))
-                elif config.main_product_prefix:
-                    code = ''.join(filter(None, [
-                                config.main_product_prefix, product.suffix_code]))
-                else:
-                    code = ''.join(filter(None, [
-                                product.prefix_code, product.suffix_code]))
-                if code != product.code:
-                    product.code = code
-                cls.save(products)
+            if not product.template.has_raw_products:
+                to_super.append(product)
+                continue
+            code = None
+            if product.is_raw_product and config.raw_product_prefix:
+                code = ''.join(filter(None, [
+                            config.raw_product_prefix, product.prefix_code,
+                            config.prefix_sufix_separator,
+                            product.suffix_code]))
+            elif config.main_product_prefix:
+                code = ''.join(filter(None, [
+                            config.main_product_prefix,
+                            config.prefix_sufix_separator,
+                            product.suffix_code]))
             else:
-                super().sync_code(products)
+                code = ''.join(filter(None, [
+                            product.prefix_code,
+                            config.prefix_sufix_separator,
+                            product.suffix_code]))
+            if code != product.code:
+                product.code = code
+                to_save.append(product)
+        cls.save(to_save)
+        if to_super:
+            super().sync_code(to_super)
 
     @classmethod
     def validate(cls, products):

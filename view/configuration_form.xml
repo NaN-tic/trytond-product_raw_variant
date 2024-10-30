@@ -10,6 +10,8 @@
             <field name="raw_product_prefix"/>
             <label name="main_product_prefix"/>
             <field name="main_product_prefix"/>
+            <label name="prefix_sufix_separator"/>
+            <field name="prefix_sufix_separator"/>
         </group>
     </xpath>
 </data>

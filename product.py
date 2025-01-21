@@ -130,16 +130,6 @@ class Template(metaclass=PoolMeta):
                 variant)
 
     @classmethod
-    def create_variant_code(cls, variant):
-        # Compatibility with product_variant module (extras_depend)
-        code = super().create_variant_code(variant)
-
-        prefix = Transaction().context.get('product_raw_variant_prefix')
-        if prefix:
-            code = prefix + code
-        return code
-
-    @classmethod
     def create(cls, vlist):
         new_templates = super(Template, cls).create(vlist)
         for template in new_templates:

@@ -263,6 +263,9 @@ class Product(metaclass=PoolMeta):
                             product.prefix_code,
                             config.prefix_sufix_separator,
                             product.suffix_code]))
+            prefix = Transaction().context.get('product_raw_variant_prefix')
+            if prefix:
+                code = prefix + code
             if code != product.code:
                 product.code = code
                 to_save.append(product)

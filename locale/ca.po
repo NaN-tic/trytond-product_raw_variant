@@ -101,6 +101,14 @@ msgstr ""
 "\n"
 "Estàs intentat eliminar la variant \"%(raw_product)s\" però està definida com una variant sense processar del producte \"%(product)s\"."
 
+msgctxt "model:ir.message,text:msg_product_unique"
+msgid "The Main Variant must be unique."
+msgstr "La variant principal ha de ser única."
+
+msgctxt "model:ir.message,text:msg_raw_product_unique"
+msgid "The Raw Variant must be unique."
+msgstr "La variant sense processar ha de ser única."
+
 msgctxt "model:ir.message,text:unexpected_main_product"
 msgid ""
 "The Variant \"%(product)s\" has a Main Variant but it isn\\'t configured as "

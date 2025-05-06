@@ -17,5 +17,11 @@ this repository contains the full copyright notices and license terms. -->
 
 You are trying to delete the variant "%(raw_product)s" but it is defined as Raw Variant for product"%(product)s".</field>
         </record>
+        <record model="ir.message" id="msg_product_unique">
+            <field name="text">The Main Variant must be unique.</field>
+        </record>
+        <record model="ir.message" id="msg_raw_product_unique">
+            <field name="text">The Raw Variant must be unique.</field>
+        </record>
     </data>
 </tryton>

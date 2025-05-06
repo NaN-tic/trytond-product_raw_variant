@@ -353,7 +353,7 @@ class ProductRawProduct(ModelSQL):
         t = cls.__table__()
         cls._sql_constraints += [
             ('product_unique', Unique(t, t.product),
-                'The Main Variant must be unique.'),
+                'product_raw_variant.msg_product_unique'),
             ('raw_product_unique', Unique(t, t.raw_product),
-                'The Raw Variant must be unique.'),
+                'product_raw_variant.msg_raw_product_unique'),
             ]

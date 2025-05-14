@@ -13,7 +13,6 @@ from trytond.exceptions import UserError
 __all__ = ['Configuration', 'Template', 'Product', 'ProductRawProduct']
 
 STATES = {
-    'readonly': ~Eval('active', True),
     'invisible': ~Eval('has_raw_products', False),
     }
 DEPENDS = ['active', 'has_raw_products']

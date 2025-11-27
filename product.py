@@ -8,6 +8,7 @@ from trytond.pyson import And, Bool, Eval, Or
 from trytond.transaction import Transaction
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
+from trytond.model.exceptions import ValidationError
 
 
 __all__ = ['Configuration', 'Template', 'Product', 'ProductRawProduct']
@@ -281,17 +282,17 @@ class Product(metaclass=PoolMeta):
     def check_raw_product(self):
         if (not self.has_raw_products and
                 (self.raw_product or self.main_product)):
-            raise UserError(gettext(
+            raise ValidationError(gettext(
                 'product_raw_variant.unexpected_raw_or_main_product',
                 product=self.rec_name))
         if not self.has_raw_products:
             return
         if self.is_raw_product and self.raw_product:
-            raise UserError(gettext(
+            raise ValidationError(gettext(
                 'product_raw_variant.unexpected_raw_product',
                 product=self.rec_name))
         if not self.is_raw_product and self.main_product:
-            raise UserError(gettext(
+            raise ValidationError(gettext(
                 'product_raw_variant.unexpected_main_product',
                 product=self.rec_name))
 

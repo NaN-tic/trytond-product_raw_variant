@@ -150,17 +150,19 @@ class Template(metaclass=PoolMeta):
         super(Template, cls).delete(templates)
 
     @classmethod
-    def copy(cls, templates, defaults=None):
-        if defaults is None:
-            defaults = {}
-        defaults = defaults.copy()
+    def copy(cls, templates, default=None, defaults=None):
+        if defaults is not None:
+            default = defaults
+        if default is None:
+            default = {}
+        default = default.copy()
         raw_templates = [t for t in templates if t.has_raw_products]
         not_raw_templates = [t for t in templates if not t.has_raw_products]
-        raw_defaults = defaults.copy()
+        raw_defaults = default.copy()
         raw_defaults.setdefault('products', [])
         new_raw = (super(Template, cls).copy(raw_templates, raw_defaults)
             if raw_templates else [])
-        new_main = (super(Template, cls).copy(not_raw_templates, defaults)
+        new_main = (super(Template, cls).copy(not_raw_templates, default)
             if not_raw_templates else [])
         return new_raw + new_main
 

@@ -5,7 +5,7 @@ import logging
 from trytond.model import ModelSQL, fields, Unique
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import And, Bool, Eval, Or
-from trytond.transaction import Transaction
+from trytond.transaction import Transaction, without_check_access
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.model.exceptions import ValidationError
@@ -179,15 +179,17 @@ class Template(metaclass=PoolMeta):
         with Transaction().set_context(no_create_raw_products=True):
             logger.info("copying %d products"
                 % len(products_missing_raw_variant))
-            missing_raw_products = Product.copy(products_missing_raw_variant,
-                default={
-                    'has_raw_products': True,
-                    'is_raw_product': True,
-                    })
+            with without_check_access():
+                missing_raw_products = Product.copy(
+                    products_missing_raw_variant, default={
+                        'has_raw_products': True,
+                        'is_raw_product': True,
+                        })
             for raw_product, product in zip(missing_raw_products,
                     products_missing_raw_variant):
                 product.raw_product = raw_product
-                product.save()
+                with without_check_access():
+                    product.save()
 
         logger.info("End create missing raw products")
 
@@ -317,11 +319,12 @@ class Product(metaclass=PoolMeta):
         logger.info('Create raw product: %s.' % (self.rec_name))
 
         with Transaction().set_context(no_create_raw_products=True):
-            raw_product, = self.copy([self], default={
-                    'suffix_code': self.suffix_code,
-                    'is_raw_product': True,
-                    'main_product': self.id,
-                    })
+            with without_check_access():
+                raw_product, = self.copy([self], default={
+                        'suffix_code': self.suffix_code,
+                        'is_raw_product': True,
+                        'main_product': self.id,
+                        })
             self.sync_code([raw_product])
         return raw_product
 
